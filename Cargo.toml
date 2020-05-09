@@ -1,0 +1,22 @@
+[package]
+name = "statsd-explore"
+version = "0.1.0"
+authors = ["R. Tyler Croy <rtyler@brokenco.de>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# Base asynchronous runtime
+async-std = "~1.5.0"
+futures = "~0.3.4"
+
+# Logging
+log = "~0.4.8"
+pretty_env_logger = "~0.3.1"
+
+statsd-parser = { git = "https://github.com/appsignal/statsd_parser" }
+
+# Used for the UI
+tui = "0.9"
+termion = "1.5"
