@@ -1,0 +1,4 @@
+= Statsd Explorer
+
+This is a simple console-based daemon which acts as a stastd listener and prints out metrics as they come in.
+
