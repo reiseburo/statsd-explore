@@ -2,3 +2,5 @@
 
 This is a simple console-based daemon which acts as a stastd listener and prints out metrics as they come in.
 
+
+image::https://raw.githubusercontent.com/reiseburo/statsd-explore/master/statsdexplore.png[v0.0.0.0.0.1]
