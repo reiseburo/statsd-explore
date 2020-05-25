@@ -7,15 +7,7 @@ on:
     branches: [ master ]
 
 
-jobs:
-  mac:
-    name: Build macOS
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Run tests
-      run: cargo test --verbose
-    
+jobs:    
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -50,3 +42,5 @@ jobs:
           args:  --target=${{ matrix.target }}
           
       - run: 'ls -lah target/debug'
+      - run: 'ls -lah'
+      - run: 'tree .'
