@@ -24,8 +24,8 @@ jobs:
       - name: Archive Artifact
         uses: actions/upload-artifact@v1
         with:
-          name: hotdog-amd64
-          path: ./target/release/hotdog
+          name: statsd-explore-amd64
+          path: ./target/release/statsd-explore
 
   mac:
     name: Build macOS
@@ -44,8 +44,8 @@ jobs:
       - name: Archive Artifact
         uses: actions/upload-artifact@v1
         with:
-          name: hotdog-macos
-          path: ./target/release/hotdog
+          name: statsd-explore-macos
+          path: ./target/release/statsd-explore
 
   release:
     name: Create release
@@ -64,32 +64,32 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
 
-      - name: Download hotdog-amd64
+      - name: Download amd64
         uses: actions/download-artifact@v1
         with:
-          name: hotdog-amd64
+          name: statds-explore-amd64
 
-      - name: Upload hotdog-amd64
+      - name: Upload amd64 release 
         id: upload-release-asset-amd64
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: hotdog-amd64
+          asset_path: statsd-explore-amd64
           asset_content_type: application/octet-stream
 
-      - name: Download hotdog-macos
+      - name: Download macos
         uses: actions/download-artifact@v1
         with:
-          name: hotdog-macos
+          name: statsd-explore-macos
 
-      - name: Upload hotdog-macos
+      - name: Upload macos release
         id: upload-release-asset-macos
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: hotdog-macos
+          asset_path: statsd-explore-macos
           asset_content_type: application/octet-stream
