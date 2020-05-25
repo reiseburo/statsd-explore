@@ -53,6 +53,7 @@ jobs:
     needs:
       - linux
       - mac
+    steps:
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
