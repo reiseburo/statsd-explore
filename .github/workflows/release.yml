@@ -67,7 +67,7 @@ jobs:
       - name: Download amd64
         uses: actions/download-artifact@v1
         with:
-          name: statds-explore-amd64
+          name: statsd-explore-amd64
 
       - name: Upload amd64 release 
         id: upload-release-asset-amd64
