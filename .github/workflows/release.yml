@@ -70,7 +70,7 @@ jobs:
           name: hotdog-amd64
 
       - name: Upload hotdog-amd64
-        id: upload-release-asset
+        id: upload-release-asset-amd64
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -85,7 +85,7 @@ jobs:
           name: hotdog-macos
 
       - name: Upload hotdog-macos
-        id: upload-release-asset
+        id: upload-release-asset-macos
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
