@@ -7,7 +7,7 @@ on:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
-  build:
+  linux:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
@@ -21,6 +21,38 @@ jobs:
 
       - run: cargo build --release
 
+      - name: Archive Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: hotdog-amd64
+          path: ./target/release/hotdog
+
+  mac:
+    name: Build macOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create build
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - run: cargo build --release
+
+      - name: Archive Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: hotdog-macos
+          path: ./target/release/hotdog
+
+  release:
+    name: Create release
+    runs-on: ubuntu-latest
+    needs:
+      - linux
+      - mac
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -31,35 +63,32 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
 
-      - name: Upload Release Asset
+      - name: Download hotdog-amd64
+        uses: actions/download-artifact@v1
+        with:
+          name: hotdog-amd64
+
+      - name: Upload hotdog-amd64
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./target/release/statsd-explore
-          asset_name: hotdog-amd64
+          asset_path: hotdog-amd64
           asset_content_type: application/octet-stream
-          
 
-  mac:
-    name: Build macOS
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-        
-      - name: Run tests
-        run: cargo build --release
+      - name: Download hotdog-macos
+        uses: actions/download-artifact@v1
+        with:
+          name: hotdog-macos
 
-      - name: Upload Release Asset
+      - name: Upload hotdog-macos
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./target/release/statsd-explore
-          asset_name: hotdog-macos
+          asset_path: hotdog-macos
           asset_content_type: application/octet-stream
-  
