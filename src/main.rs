@@ -17,15 +17,16 @@ use std::collections::HashMap;
 type MetricKey = (String, BTreeMap<String, String>);
 
 fn print_metric(metric: Message, counters: &mut HashMap<MetricKey, f64>) {
+    let tags = match metric.tags {
+        Some(t) => { t },
+        None => {
+            BTreeMap::new()
+        },
+    };
+
     match metric.metric {
         Metric::Counter(c) => {
             let mut actual = c.value;
-            let tags = match metric.tags {
-                Some(t) => { t },
-                None => {
-                    BTreeMap::new()
-                },
-            };
 
             let mkey = (metric.name, tags);
 
@@ -37,13 +38,13 @@ fn print_metric(metric: Message, counters: &mut HashMap<MetricKey, f64>) {
             counters.insert(mkey, actual);
         },
         Metric::Gauge(g) => {
-            println!("📏 {}\t\t{}", g.value, &metric.name);
+            println!("📏 {}\t\t{}  ({:?})", g.value, &metric.name, tags);
         },
         Metric::Timing(t) => {
-            println!("⏱  {}ms\t\t{}", t.value, &metric.name);
+            println!("⏱  {}ms\t\t{}  ({:?})", t.value, &metric.name, tags);
         },
         Metric::Histogram(h) => {
-            println!("📊 {}\t\t{}", h.value, &metric.name);
+            println!("📊 {}\t\t{}  ({:?})", h.value, &metric.name, tags);
         },
         _ => {
         },
