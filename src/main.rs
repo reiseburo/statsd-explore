@@ -8,28 +8,42 @@ use async_std::task;
 use async_std::net::UdpSocket;
 use log::*;
 use statsd_parser::*;
+use std::collections::BTreeMap;
 use std::collections::HashMap;
 
-fn print_metric(metric: Message, counters: &mut HashMap<String, f64>) {
+/**
+ * Key needed for printing statsd and dogstatsd metrics at the same time
+ */
+type MetricKey = (String, BTreeMap<String, String>);
+
+fn print_metric(metric: Message, counters: &mut HashMap<MetricKey, f64>) {
     match metric.metric {
         Metric::Counter(c) => {
             let mut actual = c.value;
+            let tags = match metric.tags {
+                Some(t) => { t },
+                None => {
+                    BTreeMap::new()
+                },
+            };
 
-            if counters.contains_key(&metric.name) {
-                actual = actual + counters.get(&metric.name).unwrap();
+            let mkey = (metric.name, tags);
+
+            if counters.contains_key(&mkey) {
+                actual = actual + counters.get(&mkey).unwrap();
             }
 
-            println!("📈 +{} => {}\t{}", c.value, actual, metric.name);
-            counters.insert(metric.name, actual);
+            println!("📈 +{} => {}\t{}  ({:?})", c.value, actual, &mkey.0, &mkey.1);
+            counters.insert(mkey, actual);
         },
         Metric::Gauge(g) => {
-            println!("📏 {}\t\t{}", g.value, metric.name);
+            println!("📏 {}\t\t{}", g.value, &metric.name);
         },
         Metric::Timing(t) => {
-            println!("⏱  {}ms\t\t{}", t.value, metric.name);
+            println!("⏱  {}ms\t\t{}", t.value, &metric.name);
         },
         Metric::Histogram(h) => {
-            println!("📊 {}\t\t{}", h.value, metric.name);
+            println!("📊 {}\t\t{}", h.value, &metric.name);
         },
         _ => {
         },
@@ -43,7 +57,7 @@ fn main() -> std::io::Result<()> {
         info!("Listening on port 8125");
         let socket = UdpSocket::bind("127.0.0.1:8125").await?;
 
-        let mut counters = HashMap::<String, f64>::new();
+        let mut counters = HashMap::<MetricKey, f64>::new();
 
         loop {
             let mut buf = [0; 1024];
